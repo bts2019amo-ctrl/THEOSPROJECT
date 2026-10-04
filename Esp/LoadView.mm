@@ -35,13 +35,10 @@ ImVec2 menuSize = ImVec2(0.0f, 0.0f);
 @implementation MenuInteraction
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
-    extern ImVec2 menuPos;
-    extern ImVec2 menuSize;
-    CGRect touchableArea = CGRectMake(menuPos.x, menuPos.y, menuSize.x, menuSize.y);
-    if (CGRectContainsPoint(touchableArea, point)) {
-        return [super pointInside:point withEvent:event];
-    }
-    return NO;
+    // Enquanto o painel está aberto, esta camada recebe os toques e os
+    // encaminha ao ImGui. Isso evita depender de coordenadas entre views
+    // aninhadas (que faziam o painel aparecer sem aceitar cliques).
+    return [ImGuiDrawView isMenuShowing];
 }
 
 
@@ -137,7 +134,6 @@ _vna.view.userInteractionEnabled = NO;
 
     menuTouchView = [[MenuInteraction alloc] initWithFrame:mainView.frame];
     menuTouchView.multipleTouchEnabled = YES;
-menuTouchView.multipleTouchEnabled = YES;
     [[UIApplication sharedApplication].windows[0].rootViewController.view addSubview:menuTouchView];
 
     // ── Volume button toggle ───────────────────────────────
@@ -161,7 +157,6 @@ menuTouchView.multipleTouchEnabled = YES;
     InvisibleMenuButton.frame = CGRectMake(10, 10, 50, 50);
     InvisibleMenuButton.backgroundColor = [UIColor clearColor];
     InvisibleMenuButton.multipleTouchEnabled = YES;
-    InvisibleMenuButton.multipleTouchEnabled = YES;
 [InvisibleMenuButton addTarget:self action:@selector(buttonDragged:withEvent:) forControlEvents:UIControlEventTouchDragInside];
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showMenu:)];
     [InvisibleMenuButton addGestureRecognizer:tapGestureRecognizer];
@@ -172,7 +167,6 @@ menuTouchView.multipleTouchEnabled = YES;
     VisibleMenuButton.backgroundColor = [UIColor clearColor];
     VisibleMenuButton.layer.cornerRadius = VisibleMenuButton.frame.size.width * 0.5f;
     VisibleMenuButton.multipleTouchEnabled = YES;
-VisibleMenuButton.multipleTouchEnabled = YES;
     [hideRecordView addSubview:VisibleMenuButton];
 
     // Triple tap (3 dedos) para abrir menu
@@ -196,6 +190,7 @@ VisibleMenuButton.multipleTouchEnabled = YES;
         if (_vna && _vna.view) {
             _vna.view.userInteractionEnabled = open;
         }
+        menuTouchView.userInteractionEnabled = open;
     }
 }
 
@@ -235,6 +230,7 @@ VisibleMenuButton.multipleTouchEnabled = YES;
         [ImGuiDrawView showChange:open];
         if (self->_vna && self->_vna.view)
             self->_vna.view.userInteractionEnabled = open;
+        menuTouchView.userInteractionEnabled = open;
     });
 }
 
