@@ -177,14 +177,14 @@ VisibleMenuButton.multipleTouchEnabled = YES;
 
     // Triple tap (3 dedos) para abrir menu
     UITapGestureRecognizer *tripleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showMenu:)];
-    tripleTapGesture.numberOfTapsRequired = 2;
-    tripleTapGesture.numberOfTouchesRequired = 3;
+    tripleTapGesture.numberOfTapsRequired = 3;
+    tripleTapGesture.numberOfTouchesRequired = 1;
     [mainView addGestureRecognizer:tripleTapGesture];
     
     // Adicionar também na window para garantir
     UITapGestureRecognizer *tripleTapGestureWindow = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showMenu:)];
-    tripleTapGestureWindow.numberOfTapsRequired = 2;
-    tripleTapGestureWindow.numberOfTouchesRequired = 3;
+    tripleTapGestureWindow.numberOfTapsRequired = 3;
+    tripleTapGestureWindow.numberOfTouchesRequired = 1;
     [keyWindow addGestureRecognizer:tripleTapGestureWindow];
 }
 

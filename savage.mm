@@ -90,6 +90,8 @@ ImFont* interb;
 ImFont* Urbanist;
 
 static bool MenDeal = true;
+extern ImVec2 menuPos;
+extern ImVec2 menuSize;
 BOOL hasGhostBeenDrawn = NO;
 static bool StreamerMode = true;
 bool fakeLagEnabled = false;
@@ -632,8 +634,11 @@ self.view.multipleTouchEnabled = YES;
         
         CGFloat x = (([UIApplication sharedApplication].windows[0].rootViewController.view.frame.size.width) - 340) / 2;
         CGFloat y = (([UIApplication sharedApplication].windows[0].rootViewController.view.frame.size.height) - 250) / 2;
+        // Mantém a camada UIKit alinhada à janela real do ImGui.
+        menuPos = ImVec2(x, y);
+        menuSize = ImVec2(400, 240);
 
-ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_FirstUseEver);
         ImGui::SetNextWindowSize(ImVec2(340, 250), ImGuiCond_FirstUseEver);
 
         
