@@ -174,17 +174,17 @@ int FUNC_GHOST(void *instance) {
 - (void)toggleSpeedX2:(BOOL)enable {
     static dispatch_once_t onceToken;
     static vector<void*> results;
-    
+
     JRMemoryEngine *engine = new JRMemoryEngine(mach_task_self());
     AddrRange range = {0x100000000, 0x200000000};
-    
+
     if (enable) {
         dispatch_once(&onceToken, ^{
             uint64_t search = 4397530849764387586;
             engine->JRScanMemory(range, &search, JR_Search_Type_ULong);
             results = engine->getAllResults();
         });
-        
+
         uint64_t modify = 4366458311853765201;
         for(int i = 0; i < results.size(); i++) {
             engine->JRWriteMemory((unsigned long long)(results[i]), &modify, JR_Search_Type_ULong);
@@ -202,30 +202,30 @@ int FUNC_GHOST(void *instance) {
 
 - (void)toggleNoRecoil:(BOOL)enable {
     static dispatch_once_t onceToken;
-    static std::vector<void*> results; 
+    static std::vector<void*> results;
 
     JRMemoryEngine* engine = new JRMemoryEngine(mach_task_self());
-    AddrRange range = { 0x100000000, 0x200000000 }; 
+    AddrRange range = { 0x100000000, 0x200000000 };
 
     if (enable) {
         dispatch_once(&onceToken, ^{
-            uint64_t search = 1016018816; 
+            uint64_t search = 1016018816;
             engine->result->resultBuffer.clear();
             engine->result->count = 0;
             engine->JRScanMemory(range, &search, JR_Search_Type_ULong);
             results = engine->getAllResults();
         });
 
-        uint64_t modify = 0; 
+        uint64_t modify = 0;
         for (size_t i = 0; i < results.size(); i++) {
             engine->JRWriteMemory((unsigned long long)(results[i]), &modify, JR_Search_Type_ULong);
         }
     } else {
-        uint64_t modify = 1016018816; 
+        uint64_t modify = 1016018816;
         for (size_t i = 0; i < results.size(); i++) {
             engine->JRWriteMemory((unsigned long long)(results[i]), &modify, JR_Search_Type_ULong);
         }
-        onceToken = 0; 
+        onceToken = 0;
         results.clear();
     }
 
@@ -235,10 +235,10 @@ int FUNC_GHOST(void *instance) {
 - (void)toggleWallGlow:(BOOL)enable {
     static dispatch_once_t onceToken;
     static vector<void*> results;
-    
+
     JRMemoryEngine *engine = new JRMemoryEngine(mach_task_self());
     AddrRange range = {0x100000000, 0x160000000};
-    
+
     if (enable) {
         dispatch_once(&onceToken, ^{
             float search = 1.22f;
@@ -246,7 +246,7 @@ int FUNC_GHOST(void *instance) {
             results = engine->getAllResults();
         });
 
-        
+
         float modify = 965.0f;
         for(int i = 0; i < results.size(); i++) {
             engine->JRWriteMemory((unsigned long long)(results[i]), &modify, JR_Search_Type_Float);
@@ -267,17 +267,17 @@ int FUNC_GHOST(void *instance) {
 - (void)toggleWallFly:(BOOL)enable {
     static dispatch_once_t onceToken;
     static vector<void*> results;
-    
+
     JRMemoryEngine *engine = new JRMemoryEngine(mach_task_self());
     AddrRange range = {0x100000000, 0x160000000};
-    
+
     if (enable) {
         dispatch_once(&onceToken, ^{
             float search = 1.5f;
             engine->JRScanMemory(range, &search, JR_Search_Type_Float);
             results = engine->getAllResults();
         });
-        
+
         float modify = 900.0f;
         for(int i = 0; i < results.size(); i++) {
             engine->JRWriteMemory((unsigned long long)(results[i]), &modify, JR_Search_Type_Float);
@@ -296,10 +296,10 @@ int FUNC_GHOST(void *instance) {
 - (void)toggleWallHack:(BOOL)enable {
     static dispatch_once_t onceToken;
     static vector<void*> results;
-    
+
     JRMemoryEngine *engine = new JRMemoryEngine(mach_task_self());
     AddrRange range = {0x100000000, 0x160000000};
-    
+
     if (enable) {
         dispatch_once(&onceToken, ^{
             float search = 2;
@@ -314,7 +314,7 @@ int FUNC_GHOST(void *instance) {
             engine->JRNearBySearch(0x20, &search4, JR_Search_Type_Float);
             results = engine->getAllResults();
         });
-        
+
         float modify = -99;
         float modify1 = -1;
         float modify2 = -999;
@@ -335,17 +335,17 @@ int FUNC_GHOST(void *instance) {
 - (void)toggleScope:(BOOL)enable {
     static dispatch_once_t onceToken;
     static vector<void*> results;
-    
+
     JRMemoryEngine *engine = new JRMemoryEngine(mach_task_self());
     AddrRange range = {0x100000000, 0x160000000};
-    
+
     if (enable) {
         dispatch_once(&onceToken, ^{
             float search = 0.03f;
             engine->JRScanMemory(range, &search, JR_Search_Type_Float);
             results = engine->getAllResults();
         });
-        
+
         float modify = 10.0f;
         for(int i = 0; i < results.size(); i++) {
             engine->JRWriteMemory((unsigned long long)(results[i]), &modify, JR_Search_Type_Float);
@@ -507,7 +507,7 @@ self.view.multipleTouchEnabled = YES;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     self.mtkView.device = self.device;
     self.mtkView.delegate = self;
     self.mtkView.clearColor = MTLClearColorMake(0, 0, 0, 0);
@@ -579,18 +579,18 @@ self.view.multipleTouchEnabled = YES;
 
 
 
-    
+
     id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBuffer];
-        
+
     hideRecordTextfield.secureTextEntry = NO;
 
-    if (MenDeal == true) 
+    if (MenDeal == true)
     {
         [self.view setUserInteractionEnabled:YES];
         [self.view.superview setUserInteractionEnabled:YES];
         [menuTouchView setUserInteractionEnabled:YES];
-    } 
-    else if (MenDeal == false) 
+    }
+    else if (MenDeal == false)
     {
         [self.view setUserInteractionEnabled:NO];
         [self.view.superview setUserInteractionEnabled:NO];
@@ -599,7 +599,7 @@ self.view.multipleTouchEnabled = YES;
 
 
     MTLRenderPassDescriptor* renderPassDescriptor = view.currentRenderPassDescriptor;
-    if (renderPassDescriptor != nil) 
+    if (renderPassDescriptor != nil)
     {
         id<MTLRenderCommandEncoder> renderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
         [renderEncoder pushDebugGroup:@"ImGui Jane"];
@@ -609,7 +609,7 @@ self.view.multipleTouchEnabled = YES;
         ImGuiStyle& style = ImGui::GetStyle();
         ImFont* font = ImGui::GetFont();
         font->Scale = 16.f / font->FontSize;
-        
+
         // Calcula tudo no mesmo espaço usado pelo ImGui, com margem segura.
         // Assim a janela nunca sai da MTKView nem aparece cortada pela metade.
         CGFloat screenW = io.DisplaySize.x;
@@ -650,7 +650,7 @@ self.view.multipleTouchEnabled = YES;
         ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always);
         ImGui::SetNextWindowSize(ImVec2(panelW, panelH), ImGuiCond_Always);
 
-        
+
         if (MenDeal == true)
         {
             ImGui::SetNextWindowSize(ImVec2(panelW, panelH), ImGuiCond_Always);
@@ -713,12 +713,13 @@ self.view.multipleTouchEnabled = YES;
 
 
             // Coluna da direita (conteúdo da aba selecionada)
+            bool compactLayout = screenH > screenW;
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 5));
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 5));
 
             if (selected_tab == 0) {
 
-                // Conteúdo da aba AIM 
+                // Conteúdo da aba AIM
 
                 CustomCheckbox(ENCRYPT(" Ativar Aimbot                 "), &Vars.Aimbot, &userColor);
 
@@ -727,34 +728,34 @@ float firstCustomCheckboxWidth = ImGui::GetItemRectSize().x;  // Largura do prim
 float spacing = ImGui::GetStyle().ItemSpacing.x;
 
 // Posição X = posição atual + largura do primeiro checkbox + espaçamento
-ImGui::SameLine(firstCustomCheckboxWidth + 30.0f); // 20 pixels de espaçamento
+if (!compactLayout) ImGui::SameLine(firstCustomCheckboxWidth + 30.0f); // 20 pixels de espaçamento
 CustomCheckbox(ENCRYPT(" Exibir FOV"), &Vars.isAimFov, &userColor);
                 CustomCheckbox(ENCRYPT(" Ignorar Derrubados         "), &Vars.IgnoreKnocked, &userColor);
 
 float firstCustomCheckboxWidth2 = ImGui::GetItemRectSize().x;
-    ImGui::SameLine(firstCustomCheckboxWidth2 + 20.0f);
+    if (!compactLayout) ImGui::SameLine(firstCustomCheckboxWidth2 + 20.0f);
     CustomCheckbox(ENCRYPT(" Apenas Visiveis"), &Vars.VisibleCheck, &userColor);
 
-                ImGui::PushItemWidth(210);
+                ImGui::PushItemWidth(compactLayout ? -1.0f : 210.0f);
                 ImGui::SliderFloat(ENCRYPT("Regular FOV"), &Vars.AimFov, 0.00f, 360.00f, ENCRYPT(" %.1f "), ImGuiSliderFlags_None);
                 ImGui::Combo(ENCRYPT("Puxada"), &Vars.AimHitbox, Vars.aimHitboxes, 3);
                 ImGui::Text(ENCRYPT("Tipo de Aimbot:"));
 
                 ImGui::RadioButton(ENCRYPT("Ao Atirar  "), &Vars.AimWhen, 1);
-                ImGui::SameLine();
+                if (!compactLayout) ImGui::SameLine();
                 ImGui::RadioButton(ENCRYPT("Ao Olhar"), &Vars.AimWhen, 0);
                 ImGui::PopItemWidth();
             } else if (selected_tab == 1) {
                 // Conteúdo da aba ESP
 
-                ImGui::Columns(2, "ESPColumns", false);
+                if (!compactLayout) ImGui::Columns(2, "ESPColumns", false);
                 CustomCheckbox(ENCRYPT(" Ativar ESP        "), &Vars.Enable, &userColor);
 CustomCheckbox(ENCRYPT(" ESP Linha    "), &Vars.lines, &userColor);
-ImGui::SameLine();
+if (!compactLayout) ImGui::SameLine();
 CustomCheckbox(ENCRYPT(" ESP Distância    "), &Vars.Distance, &userColor);
 
 CustomCheckbox(ENCRYPT(" ESP Caixa    "), &Vars.Box, &userColor);
-ImGui::SameLine();
+if (!compactLayout) ImGui::SameLine();
 CustomCheckbox(ENCRYPT(" ESP Inimigos"), &Vars.counts, &userColor);
 
 CustomCheckbox(ENCRYPT(" ESP Nome"), &Vars.Name, &userColor);
@@ -764,22 +765,22 @@ CustomCheckbox(ENCRYPT(" ESP Esqueleto"), &Vars.skeleton, &userColor);
 
 
 
-                
+
 
 } else if (selected_tab == 2) {
     // Aba MISC
 
     // ===== Funções Rage - topo =====
     ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), ICON_FA_EXCLAMATION_TRIANGLE); // Ícone de aviso amarelo
-    ImGui::SameLine();
+    if (!compactLayout) ImGui::SameLine();
     ImGui::Text(ENCRYPT(" Funções Rage"));
 
 // Segunda linha: Speed e No Recoil
 CustomCheckbox(ENCRYPT(" AimKill   "), &SpeeeX2Enabled, &userColor);
-ImGui::SameLine();
+if (!compactLayout) ImGui::SameLine();
 CustomCheckbox(ENCRYPT(" No Recoil"), &NoRecoilEnabled, &userColor);
 
-ImGui::SameLine();
+if (!compactLayout) ImGui::SameLine();
         ImGui::Checkbox("Voar Player", &Vars.UpPlayerOne);
 ImGui::Checkbox(" Ghost Hack", &Vars.ShowGhostButton);
         if (Vars.ShowGhostButton) {
@@ -796,17 +797,17 @@ ImGui::Checkbox(" Ghost Hack", &Vars.ShowGhostButton);
 
     // ===== Personalização - abaixo =====
     ImGui::TextColored(ImVec4(0, 1, 0, 1), ICON_FA_BARS);
-    ImGui::SameLine();
+    if (!compactLayout) ImGui::SameLine();
     ImGui::Text(ENCRYPT(" Personalização"));
 ImGui::PushItemWidth(40.0f);
 ImGui::ColorEdit4(ENCRYPT("Cor do Painel            "), (float*)&userColor, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_PickerHueBar);
-ImGui::SameLine(); 
+if (!compactLayout) ImGui::SameLine();
 ImGui::ColorEdit4(ENCRYPT("Cor do FOV"), (float*)&fovColor, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_PickerHueBar);
 ImGui::ColorEdit4(ENCRYPT("Cor da ESP Visível   "), (float*)&espv, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_PickerHueBar);
-ImGui::SameLine(); 
+if (!compactLayout) ImGui::SameLine();
 ImGui::ColorEdit4(ENCRYPT("Cor da ESP Invisível"), (float*)&espi, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_PickerHueBar);
 ImGui::ColorEdit4(ENCRYPT("Cor do Nome             "), (float*)&nameColor, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_PickerHueBar);
-ImGui::SameLine();
+if (!compactLayout) ImGui::SameLine();
 ImGui::ColorEdit4(ENCRYPT("Cor da Distância"), (float*)&distanceColor, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_PickerHueBar);
 ImGui::PopItemWidth();
     ImGuiStyle& style = ImGui::GetStyle();
@@ -878,12 +879,12 @@ if (ImGui::Button(ENCRYPT(" Discord "))) {
             ImGui::End();
             ImGui::PopStyleVar();
         }
-        
+
         ImDrawList* draw_list = ImGui::GetBackgroundDrawList();
         get_players();
         aimbot();
         game_sdk->init();
-        
+
 
 if (Vars.isAimFov && Vars.AimFov > 0) {
     ImVec2 center = ImVec2(ImGui::GetIO().DisplaySize.x / 2, ImGui::GetIO().DisplaySize.y / 2);
@@ -921,8 +922,8 @@ if (Vars.isAimFov && Vars.AimFov > 0) {
         [renderEncoder endEncoding];
         [commandBuffer presentDrawable:view.currentDrawable];
         [commandBuffer commit];
-    } 
-} 
+    }
+}
 
 - (void)mtkView:(MTKView*)view drawableSizeWillChange:(CGSize)size {}
 void hooking() {
@@ -930,7 +931,7 @@ void* address[] = {
                (void*)getRealOffset(ENCRYPTOFFSET("0x1044290AC"))
     };
     void* function[] = {
-                (void*)antiban                                                     
+                (void*)antiban
     };
             hook(address, function, 1);
 }
@@ -944,7 +945,7 @@ void *hack_thread(void *) {
 
 void __attribute__((constructor)) initialize() {
     pthread_t hacks;
-    pthread_create(&hacks, NULL, hack_thread, NULL); 
+    pthread_create(&hacks, NULL, hack_thread, NULL);
 }
 
 - (NSString*)remaningTime:(NSDate*)startDate endDate:(NSDate*)endDate
@@ -956,7 +957,7 @@ void __attribute__((constructor)) initialize() {
     NSInteger minutes;
     NSInteger second;
     NSString *durationString;
-    
+
     components = [[NSCalendar currentCalendar] components: NSCalendarUnitDay|NSCalendarUnitHour|NSCalendarUnitMinute|NSCalendarUnitSecond fromDate:startDate toDate:endDate options: 0];
     days = [components day];
     week = round(days / 7);
