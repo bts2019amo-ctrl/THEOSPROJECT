@@ -432,6 +432,11 @@ void CustomCheckbox(const char* label, bool* v, ImVec4* userColor)
     draw->AddRectFilled(p, ImVec2(p.x + size.x, p.y + size.y), fillColor, rounding);
     ImU32 borderColor = IM_COL32(60, 60, 60, 255);
     draw->AddRect(p, ImVec2(p.x + size.x, p.y + size.y), borderColor, rounding, 0, 1.0f);
+    if (*v) {
+        ImU32 checkColor = IM_COL32(255, 255, 255, 255);
+        draw->AddLine(ImVec2(p.x + 6, p.y + 13), ImVec2(p.x + 11, p.y + 18), checkColor, 2.0f);
+        draw->AddLine(ImVec2(p.x + 11, p.y + 18), ImVec2(p.x + 20, p.y + 8), checkColor, 2.0f);
+    }
 
     // alinhar texto verticalmente no centro da checkbox
     ImGui::SameLine();
@@ -614,22 +619,30 @@ self.view.multipleTouchEnabled = YES;
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 6));
             
 float buttonWidth = 101.0f;
-const ImVec4 activeTabBg = ImVec4(25.0f/255,32.0f/255,40.0f/255,1);
-if (selected_tab == 0) ImGui::PushStyleColor(ImGuiCol_Button, activeTabBg);
-if (ImGui::Button(ICON_FA_CROSSHAIRS "\nAimbot", ImVec2(buttonWidth,52))) selected_tab=0;
-if (selected_tab == 0) ImGui::PopStyleColor();
-if (selected_tab == 1) ImGui::PushStyleColor(ImGuiCol_Button, activeTabBg);
-if (ImGui::Button(ICON_FA_EYE "\nVisuals", ImVec2(buttonWidth,52))) selected_tab=1;
-if (selected_tab == 1) ImGui::PopStyleColor();
-if (selected_tab == 2) ImGui::PushStyleColor(ImGuiCol_Button, activeTabBg);
-if (ImGui::Button(ICON_FA_COG "\nConfig", ImVec2(buttonWidth,52))) selected_tab=2;
-if (selected_tab == 2) ImGui::PopStyleColor();
-if (selected_tab == 3) ImGui::PushStyleColor(ImGuiCol_Button, activeTabBg);
-if (ImGui::Button(ICON_FA_ADDRESS_CARD "\nSettings", ImVec2(buttonWidth,52))) selected_tab=3;
-if (selected_tab == 3) ImGui::PopStyleColor();
+auto MoniteTab = [&](const char* title, int index) {
+    bool active = selected_tab == index;
+    ImGui::PushStyleColor(ImGuiCol_Button, active ? ImVec4(25.0f/255,32.0f/255,40.0f/255,1) : ImVec4(0,0,0,0));
+    if (ImGui::Button(title, ImVec2(buttonWidth,52))) selected_tab=index;
+    ImVec2 tabMin=ImGui::GetItemRectMin(), tabMax=ImGui::GetItemRectMax();
+    if (active) {
+        float pulse=0.82f+0.18f*(0.5f+0.5f*sinf((float)ImGui::GetTime()*3.0f));
+        ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(tabMax.x-4,tabMin.y),ImVec2(tabMax.x,tabMax.y),ImGui::ColorConvertFloat4ToU32(ImVec4(0.8f,0.5f,1.0f,pulse)),0);
+    }
+    ImGui::PopStyleColor();
+};
+MoniteTab(ICON_FA_CROSSHAIRS "\nAimbot",0);
+MoniteTab(ICON_FA_EYE "\nVisuals",1);
+MoniteTab(ICON_FA_COG "\nConfig",2);
+MoniteTab(ICON_FA_ADDRESS_CARD "\nSettings",3);
             ImGui::PopStyleVar(2);
 
-            ImGui::NextColumn(); // Mover para a segunda coluna
+            ImGui::NextColumn();
+            const char* moniteSection = selected_tab == 0 ? "Aimbot" : (selected_tab == 1 ? "Visuals" : (selected_tab == 2 ? "Config" : "Settings"));
+            ImGui::TextColored(ImVec4(0.80f,0.50f,1.00f,1.00f), "%s", moniteSection);
+            ImGui::SameLine(ImGui::GetColumnWidth() - 40.0f);
+            ImGui::TextDisabled("01");
+            SeparatorCustom(285.0f, 1.0f, userColor);
+            ImGui::Spacing(); // Mover para a segunda coluna
 
             SeparatorCustom(285.0f, 1.0f, userColor);
             ImGui::Spacing();
