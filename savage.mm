@@ -88,6 +88,29 @@ extern bool FastReloadEnabled;
 extern bool BypassEnabled;
 extern bool fakeLagEnabled;
 
+@interface MoniteSlider : UISlider
+@property(nonatomic, assign) float *valueRef;
+@end
+@implementation MoniteSlider
+@end
+
+@interface MoniteFOVView : UIView
+@end
+@implementation MoniteFOVView
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self=[super initWithFrame:frame])) { self.backgroundColor=UIColor.clearColor; self.userInteractionEnabled=NO; }
+    return self;
+}
+- (void)drawRect:(CGRect)rect {
+    if (!Vars.isAimFov || Vars.AimFov <= 0) return;
+    CGFloat r=Vars.AimFov;
+    CGPoint c=CGPointMake(CGRectGetMidX(self.bounds),CGRectGetMidY(self.bounds));
+    CGContextRef ctx=UIGraphicsGetCurrentContext();
+    CGContextSetStrokeColorWithColor(ctx,[UIColor colorWithRed:fovColor.x green:fovColor.y blue:fovColor.z alpha:fovColor.w].CGColor);
+    CGContextSetLineWidth(ctx,2.0); CGContextAddEllipseInRect(ctx,CGRectMake(c.x-r,c.y-r,r*2,r*2)); CGContextStrokePath(ctx);
+}
+@end
+
 @interface MoniteActionButton : UIButton
 @property(nonatomic,copy) void (^moniteAction)(void);
 @end
@@ -150,9 +173,9 @@ extern bool fakeLagEnabled;
 - (void)refreshCheck:(UIView *)box ref:(bool *)ref { box.backgroundColor=*ref?_accent:[UIColor colorWithRed:25.0/255 green:32.0/255 blue:40.0/255 alpha:1]; [box.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)]; if (*ref) { UILabel *c=[self label:@"✓" frame:box.bounds size:16 color:UIColor.whiteColor]; c.textAlignment=NSTextAlignmentCenter; [box addSubview:c]; } }
 - (void)addSlider:(UIView *)parent y:(CGFloat *)y title:(NSString *)title ref:(float *)ref min:(float)min max:(float)max {
     UILabel *l=[self label:[NSString stringWithFormat:@"%@ %.1f",title,*ref] frame:CGRectMake(14,*y,parent.bounds.size.width-28,20) size:12 color:[UIColor colorWithWhite:.72 alpha:1]]; [parent addSubview:l]; *y+=20;
-    UISlider *sl=[[UISlider alloc] initWithFrame:CGRectMake(14,*y,parent.bounds.size.width-28,24)]; sl.minimumValue=min; sl.maximumValue=max; sl.value=*ref; sl.minimumTrackTintColor=_accent; sl.maximumTrackTintColor=[UIColor colorWithRed:25.0/255 green:32.0/255 blue:40.0/255 alpha:1]; sl.tag=(NSInteger)ref; [sl addTarget:self action:@selector(slider:) forControlEvents:UIControlEventValueChanged]; [parent addSubview:sl]; *y+=38;
+    MoniteSlider *sl=[[MoniteSlider alloc] initWithFrame:CGRectMake(14,*y,parent.bounds.size.width-28,24)]; sl.valueRef=ref; sl.minimumValue=min; sl.maximumValue=max; sl.value=*ref; sl.minimumTrackTintColor=_accent; sl.maximumTrackTintColor=[UIColor colorWithRed:25.0/255 green:32.0/255 blue:40.0/255 alpha:1]; sl.tag=(NSInteger)ref; [sl addTarget:self action:@selector(slider:) forControlEvents:UIControlEventValueChanged]; [parent addSubview:sl]; *y+=38;
 }
-- (void)slider:(UISlider *)s { float *p=(float *)s.tag; if (p) *p=s.value; }
+- (void)slider:(MoniteSlider *)s { if (s.valueRef) *s.valueRef=s.value; }
 - (void)addLine:(UIView *)v y:(CGFloat)y { UIView *l=[[UIView alloc] initWithFrame:CGRectMake(14,y,v.bounds.size.width-28,1)]; l.backgroundColor=[UIColor colorWithRed:26.0/255 green:29.0/255 blue:36.0/255 alpha:1]; [v addSubview:l]; }
 - (void)buildAim:(UIView *)v { CGFloat y=4; [self addCheck:v y:&y title:@"Aimbot" ref:&Vars.Aimbot]; [self addCheck:v y:&y title:@"Show FOV" ref:&Vars.isAimFov]; [self addCheck:v y:&y title:@"Ignore Knocked" ref:&Vars.IgnoreKnocked]; [self addCheck:v y:&y title:@"Only Visible" ref:&Vars.VisibleCheck]; [self addLine:v y:y+2]; y+=12; [self addSlider:v y:&y title:@"FOV" ref:&Vars.AimFov min:0 max:360]; }
 - (void)buildVisual:(UIView *)v { CGFloat y=4; [self addCheck:v y:&y title:@"ESP Enable" ref:&Vars.Enable]; [self addLine:v y:y+2]; y+=12; [self addCheck:v y:&y title:@"ESP Lines" ref:&Vars.lines]; [self addCheck:v y:&y title:@"ESP Distance" ref:&Vars.Distance]; [self addCheck:v y:&y title:@"ESP Boxes" ref:&Vars.Box]; [self addCheck:v y:&y title:@"ESP Enemies" ref:&Vars.counts]; [self addCheck:v y:&y title:@"ESP Name" ref:&Vars.Name]; [self addCheck:v y:&y title:@"ESP Health" ref:&Vars.Health]; [self addCheck:v y:&y title:@"ESP Skeleton" ref:&Vars.skeleton]; }

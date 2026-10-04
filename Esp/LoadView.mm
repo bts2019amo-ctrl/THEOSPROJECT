@@ -26,6 +26,7 @@ MenuInteraction* menuTouchView;
 UITextField* hideRecordTextfield;
 UIView* hideRecordView;
 UIView* monitePanelView;
+UIView* moniteFOVView;
 ImVec4 menuColor = ImVec4(1.0f, 0.18f, 0.22f, 1.0f);
 ImVec2 menuPos = ImVec2(0.0f, 0.0f);
 ImVec2 menuSize = ImVec2(0.0f, 0.0f);
@@ -152,6 +153,16 @@ _vna.view.userInteractionEnabled = NO;
         [keyWindow addSubview:monitePanelView];
     }
 
+    Class fovClass = NSClassFromString(@"MoniteFOVView");
+    if (fovClass) {
+        moniteFOVView = [[fovClass alloc] initWithFrame:keyWindow.bounds];
+        moniteFOVView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        moniteFOVView.hidden = NO;
+        if (monitePanelView) [keyWindow insertSubview:moniteFOVView belowSubview:monitePanelView];
+        else [keyWindow addSubview:moniteFOVView];
+        CADisplayLink *fovLink = [CADisplayLink displayLinkWithTarget:moniteFOVView selector:@selector(tick:)];
+        [fovLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+    }
     // ── Volume button toggle ───────────────────────────────
     // Pressionar Volume Up depois Volume Down (ou vice-versa)
     // em menos de 0.6 segundos abre/fecha o menu.
