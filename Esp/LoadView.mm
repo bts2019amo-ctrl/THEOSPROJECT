@@ -160,8 +160,6 @@ _vna.view.userInteractionEnabled = NO;
         moniteFOVView.hidden = NO;
         if (monitePanelView) [keyWindow insertSubview:moniteFOVView belowSubview:monitePanelView];
         else [keyWindow addSubview:moniteFOVView];
-        CADisplayLink *fovLink = [CADisplayLink displayLinkWithTarget:moniteFOVView selector:@selector(tick:)];
-        [fovLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
     }
     // ── Volume button toggle ───────────────────────────────
     // Pressionar Volume Up depois Volume Down (ou vice-versa)
