@@ -517,9 +517,10 @@ void SeparatorCustom(float width, float thickness, ImVec4 userColor)
 
 - (void)loadView
 {
-    CGFloat w = [UIApplication sharedApplication].windows[0].rootViewController.view.frame.size.width;
-    CGFloat h = [UIApplication sharedApplication].windows[0].rootViewController.view.frame.size.height;
-    self.view = [[MTKView alloc] initWithFrame:CGRectMake(0, 0, w, h)];
+    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    CGRect bounds = window ? window.bounds : UIScreen.mainScreen.bounds;
+    self.view = [[MTKView alloc] initWithFrame:bounds];
+    self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.view.multipleTouchEnabled = YES;
 ((MTKView *)self.view).multipleTouchEnabled = YES;
 self.view.multipleTouchEnabled = YES;
@@ -632,8 +633,8 @@ self.view.multipleTouchEnabled = YES;
         ImFont* font = ImGui::GetFont();
         font->Scale = 16.f / font->FontSize;
         
-        CGFloat x = (([UIApplication sharedApplication].windows[0].rootViewController.view.frame.size.width) - 340) / 2;
-        CGFloat y = (([UIApplication sharedApplication].windows[0].rootViewController.view.frame.size.height) - 250) / 2;
+        CGFloat x = (io.DisplaySize.x - 400.0f) * 0.5f;
+        CGFloat y = (io.DisplaySize.y - 240.0f) * 0.5f;
         // Mantém a camada UIKit alinhada à janela real do ImGui.
         menuPos = ImVec2(x, y);
         menuSize = ImVec2(400, 240);

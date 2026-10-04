@@ -134,9 +134,12 @@ __attribute__((constructor)) static void initialize()
      
     [ImGuiDrawView showChange:false];
 _vna.view.userInteractionEnabled = NO;
+    _vna.view.frame = hideRecordView.bounds;
+    _vna.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [hideRecordView addSubview:_vna.view];
 
-    menuTouchView = [[MenuInteraction alloc] initWithFrame:mainView.frame];
+    menuTouchView = [[MenuInteraction alloc] initWithFrame:mainView.bounds];
+    menuTouchView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     menuTouchView.multipleTouchEnabled = YES;
     [[UIApplication sharedApplication].windows[0].rootViewController.view addSubview:menuTouchView];
 
