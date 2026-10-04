@@ -93,7 +93,6 @@ static bool MenDeal = true;
 extern ImVec2 menuPos;
 extern ImVec2 menuSize;
 BOOL hasGhostBeenDrawn = NO;
-static bool StreamerMode = true;
 bool fakeLagEnabled = false;
 bool FastReloadEnabled = true;
 bool SpeeeX2Enabled = false;
@@ -583,7 +582,7 @@ self.view.multipleTouchEnabled = YES;
     
     id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBuffer];
         
-    hideRecordTextfield.secureTextEntry = StreamerMode;
+    hideRecordTextfield.secureTextEntry = NO;
 
     if (MenDeal == true) 
     {
@@ -742,18 +741,6 @@ float firstCustomCheckboxWidth2 = ImGui::GetItemRectSize().x;
 
                 ImGui::Columns(2, "ESPColumns", false);
                 CustomCheckbox(ENCRYPT(" Ativar ESP        "), &Vars.Enable, &userColor);
-
-                // Calcula a posição para o segundo checkbox
-float textWidth = ImGui::CalcTextSize("Esconder Painel").x;
-float firstCustomCheckboxWidth = ImGui::GetItemRectSize().x;  // Largura do primeiro checkbox
-float spacing = ImGui::GetStyle().ItemSpacing.x;
-
-// Posição X = posição atual + largura do primeiro checkbox + espaçamento
-ImGui::SameLine(firstCustomCheckboxWidth + 20.0f); // 20 pixels de espaçamento
-CustomCheckbox(ENCRYPT(" Esconder Painel"), &StreamerMode, &userColor);
-
-// Agora todo o resto vem abaixo dos dois
-                
 CustomCheckbox(ENCRYPT(" ESP Linha    "), &Vars.lines, &userColor);
 ImGui::SameLine();
 CustomCheckbox(ENCRYPT(" ESP Distância    "), &Vars.Distance, &userColor);
