@@ -871,6 +871,7 @@ if (ImGui::Button(ENCRYPT(" Discord "))) {
             ImGui::PopStyleVar(2);
             ImGui::Columns(1); // Resetar colunas
             ImGui::End();
+            ImGui::PopStyleVar();
         }
         
         ImDrawList* draw_list = ImGui::GetBackgroundDrawList();
