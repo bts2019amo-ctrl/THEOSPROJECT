@@ -90,6 +90,9 @@ ImFont* interb;
 ImFont* Urbanist;
 
 static bool MenDeal = true;
+// Escalas ajustáveis pelo usuário na aba Settings.
+static float panelWidthScale = 0.94f;
+static float panelHeightScale = 0.94f;
 extern ImVec2 menuPos;
 extern ImVec2 menuSize;
 BOOL hasGhostBeenDrawn = NO;
@@ -618,16 +621,12 @@ self.view.multipleTouchEnabled = YES;
             screenW = view.bounds.size.width;
             screenH = view.bounds.size.height;
         }
-        const CGFloat safeMargin = 12.0f;
-        const CGFloat referenceRatio = 1.86f;
-        CGFloat maxW = MAX(80.0f, screenW - safeMargin * 2.0f);
-        CGFloat maxH = MAX(80.0f, screenH - safeMargin * 2.0f);
-        CGFloat panelW = MIN(maxW, maxH * referenceRatio);
-        CGFloat panelH = panelW / referenceRatio;
-        if (panelH > maxH) {
-            panelH = maxH;
-            panelW = panelH * referenceRatio;
-        }
+        // Painel quadrado grande: ambos os eixos usam a menor dimensão da tela.
+        // Os valores podem ser ajustados na aba Settings sem recompilar.
+        const CGFloat safeMargin = 8.0f;
+        CGFloat squareBase = MAX(80.0f, MIN(screenW, screenH) - safeMargin * 2.0f);
+        CGFloat panelW = MIN(squareBase * panelWidthScale, screenW - safeMargin * 2.0f);
+        CGFloat panelH = MIN(squareBase * panelHeightScale, screenH - safeMargin * 2.0f);
         CGFloat x = MAX(safeMargin, (screenW - panelW) * 0.5f);
         CGFloat y = MAX(safeMargin, (screenH - panelH) * 0.5f);
         static float panelAnim = 0.0f;
@@ -646,7 +645,7 @@ self.view.multipleTouchEnabled = YES;
         {
             ImGui::SetNextWindowSize(ImVec2(panelW, panelH), ImGuiCond_Always);
             ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.55f + 0.45f * panelAnim);
-            ImGui::Begin("##SAPP_HIRE_PANEL", &MenDeal, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+            ImGui::Begin("##SAPP_HIRE_PANEL", &MenDeal, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysVerticalScrollbar);
             // Usa o tamanho efetivo aceito pelo ImGui para nunca desenhar fora da janela.
             ImVec2 actualPanelSize = ImGui::GetWindowSize();
             panelW = actualPanelSize.x;
@@ -855,6 +854,13 @@ ImGui::PopItemWidth();
 }
 
   else if (selected_tab == 3) {
+ImGui::TextColored(ImVec4(0.95f, 0.02f, 0.18f, 1.0f), "Tamanho do painel");
+ImGui::TextDisabled("Ajuste largura e altura separadamente");
+ImGui::PushItemWidth(-1.0f);
+ImGui::SliderFloat("Largura", &panelWidthScale, 0.50f, 1.00f, "%.0f%%");
+ImGui::SliderFloat("Altura", &panelHeightScale, 0.50f, 1.00f, "%.0f%%");
+ImGui::PopItemWidth();
+ImGui::Spacing();
 NSString *key         = @"Licença validada pela API";
 NSString *expiryDate  = @"Gerenciada pelo servidor";
 NSString *deviceModel = [[UIDevice currentDevice] model];
