@@ -610,17 +610,26 @@ self.view.multipleTouchEnabled = YES;
         ImFont* font = ImGui::GetFont();
         font->Scale = 16.f / font->FontSize;
         
-        CGFloat screenW = [UIApplication sharedApplication].windows[0].rootViewController.view.frame.size.width;
-        CGFloat screenH = [UIApplication sharedApplication].windows[0].rootViewController.view.frame.size.height;
-        // Proporção widescreen da referência (aprox. 1,86:1).
-        CGFloat panelW = MIN(1210.0f, screenW * 0.82f);
+        // Use o tamanho real do MTKView; o rootView pode continuar em retrato.
+        CGFloat screenW = view.bounds.size.width;
+        CGFloat screenH = view.bounds.size.height;
+        if (screenW <= 1.0f || screenH <= 1.0f) {
+            screenW = io.DisplaySize.x;
+            screenH = io.DisplaySize.y;
+        }
+        // Proporção widescreen da referência (aprox. 1,86:1), sem deformar.
+        CGFloat panelW = MIN(screenW * 0.88f, screenH * 1.72f);
         CGFloat panelH = panelW / 1.86f;
-        if (panelH > screenH * 0.84f) {
-            panelH = screenH * 0.84f;
+        if (panelH > screenH * 0.86f) {
+            panelH = screenH * 0.86f;
             panelW = panelH * 1.86f;
         }
         CGFloat x = (screenW - panelW) * 0.5f;
         CGFloat y = (screenH - panelH) * 0.5f;
+        static float panelAnim = 0.0f;
+        if (MenDeal) panelAnim = ImMin(1.0f, panelAnim + io.DeltaTime * 8.0f);
+        else panelAnim = 0.0f;
+        CGFloat visualY = y - (1.0f - panelAnim) * 8.0f;
         // Mantém a camada UIKit alinhada à janela real do ImGui.
         menuPos = ImVec2(x, y);
         menuSize = ImVec2(panelW, panelH);
@@ -632,13 +641,16 @@ self.view.multipleTouchEnabled = YES;
         if (MenDeal == true)
         {
             ImGui::SetNextWindowSize(ImVec2(panelW, panelH), ImGuiCond_Always);
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.55f + 0.45f * panelAnim);
             ImGui::Begin("##SAPP_HIRE_PANEL", &MenDeal, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
             ImDrawList* panelDraw = ImGui::GetWindowDrawList();
             ImVec2 panelOrigin = ImGui::GetWindowPos();
             ImVec2 panelEnd = ImVec2(panelOrigin.x + panelW, panelOrigin.y + panelH);
             panelDraw->AddRectFilled(panelOrigin, panelEnd, IM_COL32(10, 11, 16, 248), 12.0f);
+            panelDraw->AddRect(panelOrigin, panelEnd, IM_COL32(42, 43, 53, 255), 12.0f, 0, 1.2f);
             panelDraw->AddRectFilled(panelOrigin, ImVec2(panelEnd.x, panelOrigin.y + 88.0f), IM_COL32(13, 14, 20, 250), 12.0f);
             panelDraw->AddLine(ImVec2(panelOrigin.x, panelOrigin.y + 88.0f), ImVec2(panelEnd.x, panelOrigin.y + 88.0f), IM_COL32(29, 30, 39, 255), 1.0f);
+            panelDraw->AddRectFilled(ImVec2(panelEnd.x - 22.0f, panelOrigin.y + 112.0f), ImVec2(panelEnd.x - 7.0f, panelEnd.y - 96.0f), IM_COL32(235, 0, 42, 235), 8.0f);
             ImGui::SetCursorPos(ImVec2(26.0f, 24.0f));
             ImGui::TextColored(ImVec4(0.95f, 0.95f, 0.98f, 1.0f), ICON_FA_COG);
             ImGui::SameLine(58.0f);
