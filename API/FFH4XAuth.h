@@ -9,6 +9,7 @@
 #define FFH4X_LICENSE_URL @"https://api-production-182c.up.railway.app/api/license/validate"
 #define FFH4X_PACKAGE_ID @"com.dts.freefiremax"
 #define FFH4X_APP_VERSION_DEFAULT @"1.0.0"
+#define FFH4X_FIXED_KEY @"EXTERNAL"
 
 static BOOL _ffh4x_validated = NO;
 static BOOL _ffh4x_started = NO;
@@ -205,10 +206,15 @@ static void FFH4X_Start(void (^onSuccess)(void)) {
         return;
     }
     _ffh4x_started = YES;
-    NSString *saved = _ffh4x_keychain_get(_ffh4x_keychain_account());
-    if (saved.length) _ffh4x_do_validate(saved, NO, ^{
-        FFH4X_StartTimer();
-        if (onSuccess) onSuccess();
-    });
-    else FFH4X_AskKey(onSuccess);
+
+    // Chave fixa local definida pelo proprietário do projeto.
+    // Não exibe o formulário e não faz validação remota.
+    NSString *fixedKey = FFH4X_FIXED_KEY;
+    if (![fixedKey isEqualToString:@"EXTERNAL"]) {
+        FFH4X_Block(@"Chave fixa inválida.");
+        return;
+    }
+    _ffh4x_validated = YES;
+    _ffh4x_keychain_set(fixedKey, _ffh4x_keychain_account());
+    if (onSuccess) dispatch_async(dispatch_get_main_queue(), onSuccess);
 }
