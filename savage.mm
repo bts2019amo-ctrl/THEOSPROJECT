@@ -495,9 +495,10 @@ void SeparatorCustom(float width, float thickness, ImVec4 userColor)
 
 - (void)loadView
 {
-    CGFloat w = [UIApplication sharedApplication].windows[0].rootViewController.view.frame.size.width;
-    CGFloat h = [UIApplication sharedApplication].windows[0].rootViewController.view.frame.size.height;
-    self.view = [[MTKView alloc] initWithFrame:CGRectMake(0, 0, w, h)];
+    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    CGRect bounds = window ? window.bounds : UIScreen.mainScreen.bounds;
+    self.view = [[MTKView alloc] initWithFrame:bounds];
+    self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.view.multipleTouchEnabled = YES;
 ((MTKView *)self.view).multipleTouchEnabled = YES;
 self.view.multipleTouchEnabled = YES;
@@ -618,9 +619,17 @@ self.view.multipleTouchEnabled = YES;
             screenW = view.bounds.size.width;
             screenH = view.bounds.size.height;
         }
-        // Dimensões originais do painel: 400 x 240 pontos.
-        CGFloat panelW = 400.0f;
-        CGFloat panelH = 240.0f;
+        // Painel grande e proporcional ao vídeo, sempre totalmente dentro da tela.
+        const CGFloat safeMargin = 8.0f;
+        const CGFloat referenceRatio = 1.86f;
+        CGFloat maxW = MAX(80.0f, screenW - safeMargin * 2.0f);
+        CGFloat maxH = MAX(80.0f, screenH - safeMargin * 2.0f);
+        CGFloat panelW = MIN(maxW * 0.90f, maxH * 0.90f * referenceRatio);
+        CGFloat panelH = panelW / referenceRatio;
+        if (panelH > maxH * 0.90f) {
+            panelH = maxH * 0.90f;
+            panelW = panelH * referenceRatio;
+        }
         CGFloat x = (screenW - panelW) * 0.5f;
         CGFloat y = (screenH - panelH) * 0.5f;
         static float panelAnim = 0.0f;
@@ -639,7 +648,7 @@ self.view.multipleTouchEnabled = YES;
         {
             ImGui::SetNextWindowSize(ImVec2(panelW, panelH), ImGuiCond_Always);
             ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.55f + 0.45f * panelAnim);
-            ImGui::Begin("##SAPP_HIRE_PANEL", &MenDeal, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+            ImGui::Begin("##SAPP_HIRE_PANEL", &MenDeal, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysVerticalScrollbar);
             // Usa o tamanho efetivo aceito pelo ImGui para nunca desenhar fora da janela.
             ImVec2 actualPanelSize = ImGui::GetWindowSize();
             panelW = actualPanelSize.x;

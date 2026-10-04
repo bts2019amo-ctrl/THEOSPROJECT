@@ -108,7 +108,8 @@ __attribute__((constructor)) static void initialize()
     UIView* mainView = keyWindow.rootViewController.view;
     if (!mainView) mainView = keyWindow;
     hideRecordTextfield = [[UITextField alloc] init];
-    hideRecordView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, UIScreen.mainScreen.bounds.size.height)];
+    hideRecordView = [[UIView alloc] initWithFrame:keyWindow.bounds];
+    hideRecordView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [hideRecordView setBackgroundColor:[UIColor clearColor]];
     [hideRecordView setUserInteractionEnabled:YES];
     hideRecordTextfield.secureTextEntry = true;
@@ -120,6 +121,9 @@ __attribute__((constructor)) static void initialize()
         hideRecordView = nil;
     }
 
+    if (!hideRecordView) hideRecordView = [[UIView alloc] initWithFrame:keyWindow.bounds];
+    hideRecordView.frame = keyWindow.bounds;
+    hideRecordView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [keyWindow addSubview:hideRecordView];
     
     if (!_vna) {
