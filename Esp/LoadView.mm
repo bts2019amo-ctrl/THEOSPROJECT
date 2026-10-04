@@ -25,6 +25,7 @@ UIButton* VisibleMenuButton;
 MenuInteraction* menuTouchView;
 UITextField* hideRecordTextfield;
 UIView* hideRecordView;
+UIView* monitePanelView;
 ImVec4 menuColor = ImVec4(1.0f, 0.18f, 0.22f, 1.0f);
 ImVec2 menuPos = ImVec2(0.0f, 0.0f);
 ImVec2 menuSize = ImVec2(0.0f, 0.0f);
@@ -142,6 +143,14 @@ _vna.view.userInteractionEnabled = NO;
     menuTouchView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     menuTouchView.multipleTouchEnabled = YES;
     [[UIApplication sharedApplication].windows[0].rootViewController.view addSubview:menuTouchView];
+    Class moniteClass = NSClassFromString(@"MonitePanelView");
+    if (moniteClass) {
+        CGFloat panelWidth = MIN(425.0, keyWindow.bounds.size.width - 20.0);
+        monitePanelView = [[moniteClass alloc] initWithFrame:CGRectMake((keyWindow.bounds.size.width - panelWidth) * 0.5, (keyWindow.bounds.size.height - 340.0) * 0.5, panelWidth, 340.0)];
+        monitePanelView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+        monitePanelView.hidden = YES;
+        [keyWindow addSubview:monitePanelView];
+    }
 
     // ── Volume button toggle ───────────────────────────────
     // Pressionar Volume Up depois Volume Down (ou vice-versa)
@@ -193,11 +202,11 @@ _vna.view.userInteractionEnabled = NO;
 - (void)showMenu:(UITapGestureRecognizer *)tapGestureRecognizer {
     if (tapGestureRecognizer.state == UIGestureRecognizerStateEnded) {
         BOOL open = ![ImGuiDrawView isMenuShowing];
-        [ImGuiDrawView showChange:open];
-        if (_vna && _vna.view) {
-            _vna.view.userInteractionEnabled = open;
-        }
-        menuTouchView.userInteractionEnabled = open;
+        [ImGuiDrawView showChange:NO];
+        _vna.view.hidden = YES;
+        monitePanelView.hidden = !open;
+        monitePanelView.userInteractionEnabled = open;
+        menuTouchView.userInteractionEnabled = NO;
     }
 }
 
@@ -234,10 +243,11 @@ _vna.view.userInteractionEnabled = NO;
     // Qualquer pressão de volume (up ou down) = toggle imediato
     dispatch_async(dispatch_get_main_queue(), ^{
         BOOL open = ![ImGuiDrawView isMenuShowing];
-        [ImGuiDrawView showChange:open];
-        if (self->_vna && self->_vna.view)
-            self->_vna.view.userInteractionEnabled = open;
-        menuTouchView.userInteractionEnabled = open;
+        [ImGuiDrawView showChange:NO];
+        self->_vna.view.hidden = YES;
+        monitePanelView.hidden = !open;
+        monitePanelView.userInteractionEnabled = open;
+        menuTouchView.userInteractionEnabled = NO;
     });
 }
 

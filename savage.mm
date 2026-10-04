@@ -82,6 +82,78 @@ UIButton *menuView;
 @property (nonatomic, strong) UISwitch *ghostSwitch;
 @end
 
+@interface MoniteActionButton : UIButton
+@property(nonatomic,copy) void (^moniteAction)(void);
+@end
+@implementation MoniteActionButton
+- (void)touchUpInside:(id)sender { if (self.moniteAction) self.moniteAction(); }
+- (instancetype)initWithFrame:(CGRect)frame { if ((self=[super initWithFrame:frame])) [self addTarget:self action:@selector(touchUpInside:) forControlEvents:UIControlEventTouchUpInside]; return self; }
+@end
+
+@interface MonitePanelView : UIView
+@end
+@implementation MonitePanelView {
+    UIView *_sidebar, *_content, *_header;
+    NSInteger _tab;
+    UIColor *_accent;
+}
+- (instancetype)initWithFrame:(CGRect)frame {
+    if ((self=[super initWithFrame:frame])) { _accent=[UIColor colorWithRed:.8 green:.5 blue:1 alpha:1]; [self buildShell]; }
+    return self;
+}
+- (void)applyCut:(UIView *)v size:(CGFloat)c {
+    v.clipsToBounds=YES;
+    UIBezierPath *p=[UIBezierPath bezierPath]; CGFloat w=v.bounds.size.width,h=v.bounds.size.height;
+    [p moveToPoint:CGPointMake(c,0)]; [p addLineToPoint:CGPointMake(w,0)]; [p addLineToPoint:CGPointMake(w,h-c)]; [p addLineToPoint:CGPointMake(w-c,h)]; [p addLineToPoint:CGPointMake(0,h)]; [p addLineToPoint:CGPointMake(0,c)]; [p closePath];
+    CAShapeLayer *m=[CAShapeLayer layer]; m.path=p.CGPath; v.layer.mask=m;
+}
+- (UILabel *)label:(NSString *)text frame:(CGRect)f size:(CGFloat)size color:(UIColor *)color {
+    UILabel *l=[[UILabel alloc] initWithFrame:f]; l.text=text; l.font=[UIFont systemFontOfSize:size weight:UIFontWeightRegular]; l.textColor=color; l.numberOfLines=1; return l;
+}
+- (void)buildShell {
+    self.backgroundColor=[UIColor colorWithRed:11.0/255 green:14.0/255 blue:21.0/255 alpha:1];
+    self.layer.borderColor=[UIColor colorWithRed:26.0/255 green:29.0/255 blue:36.0/255 alpha:1].CGColor; self.layer.borderWidth=1;
+    [self applyCut:self size:16];
+    _sidebar=[[UIView alloc] initWithFrame:CGRectMake(0,0,113,self.bounds.size.height)]; _sidebar.backgroundColor=self.backgroundColor; [self addSubview:_sidebar];
+    _content=[[UIView alloc] initWithFrame:CGRectMake(113,0,self.bounds.size.width-113,self.bounds.size.height)]; _content.backgroundColor=self.backgroundColor; [self addSubview:_content];
+    UIView *line=[[UIView alloc] initWithFrame:CGRectMake(112,0,1,self.bounds.size.height)]; line.backgroundColor=[UIColor colorWithRed:26.0/255 green:29.0/255 blue:36.0/255 alpha:1]; [self addSubview:line];
+    NSArray *names=@[@"AIMBOT",@"VISUALS",@"MISC",@"SETTINGS"];
+    NSArray *icons=@[UILabel.new,UILabel.new,UILabel.new,UILabel.new]; (void)icons;
+    for (NSInteger i=0;i<names.count;i++) {
+        MoniteActionButton *b=[[MoniteActionButton alloc] initWithFrame:CGRectMake(6,10+i*64,101,54)]; b.tag=7000+i; b.titleLabel.numberOfLines=2; b.titleLabel.textAlignment=NSTextAlignmentCenter; [b setTitle:names[i] forState:UIControlStateNormal]; b.titleLabel.font=[UIFont systemFontOfSize:11 weight:UIFontWeightSemibold]; b.moniteAction=^{ self->_tab=i; [self rebuild]; }; [_sidebar addSubview:b];
+    }
+    UIPanGestureRecognizer *pan=[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(drag:)]; [_header addGestureRecognizer:pan];
+    [self rebuild];
+}
+- (void)drag:(UIPanGestureRecognizer *)g { CGPoint d=[g translationInView:self.superview]; self.center=CGPointMake(self.center.x+d.x,self.center.y+d.y); [g setTranslation:CGPointZero inView:self.superview]; }
+- (void)clearContent { for (UIView *v in _content.subviews) [v removeFromSuperview]; }
+- (void)rebuild {
+    [self clearContent];
+    NSString *title=@[@"AIMBOT",@"VISUALS",@"MISC",@"SETTINGS"][_tab];
+    UIView *head=[[UIView alloc] initWithFrame:CGRectMake(14,12,_content.bounds.size.width-28,40)]; head.backgroundColor=[UIColor colorWithRed:6.0/255 green:9.0/255 blue:14.0/255 alpha:1]; [_content addSubview:head]; [self applyCut:head size:8];
+    UILabel *t=[self label:title frame:CGRectMake(14,0,head.bounds.size.width-28,40) size:13 color:_accent]; [head addSubview:t];
+    UIView *body=[[UIView alloc] initWithFrame:CGRectMake(0,64,_content.bounds.size.width,_content.bounds.size.height-64)]; [_content addSubview:body];
+    if (_tab==0) [self buildAim:body]; else if (_tab==1) [self buildVisual:body]; else if (_tab==2) [self buildMisc:body]; else [self buildSettings:body];
+    for (NSInteger i=0;i<4;i++) { UIButton *b=(UIButton *)[_sidebar viewWithTag:7000+i]; b.backgroundColor=(i==_tab)?[UIColor colorWithRed:25.0/255 green:32.0/255 blue:40.0/255 alpha:1]:UIColor.clearColor; b.layer.borderWidth=(i==_tab)?2:0; b.layer.borderColor=_accent.CGColor; }
+}
+- (void)addCheck:(UIView *)parent y:(CGFloat *)y title:(NSString *)title ref:(bool *)ref {
+    UIView *row=[[UIView alloc] initWithFrame:CGRectMake(14,*y,parent.bounds.size.width-28,30)]; [parent addSubview:row];
+    MoniteActionButton *box=[[MoniteActionButton alloc] initWithFrame:CGRectMake(0,3,22,22)]; box.layer.borderWidth=1; box.layer.borderColor=[UIColor colorWithRed:60.0/255 green:65.0/255 blue:75.0/255 alpha:1].CGColor; box.moniteAction=^{ *ref=!*ref; [self refreshCheck:box ref:ref]; }; [row addSubview:box];
+    [row addSubview:[self label:title frame:CGRectMake(34,0,row.bounds.size.width-34,30) size:13 color:[UIColor colorWithWhite:.78 alpha:1]]]; [self refreshCheck:box ref:ref]; *y+=34;
+}
+- (void)refreshCheck:(UIView *)box ref:(bool *)ref { box.backgroundColor=*ref?_accent:[UIColor colorWithRed:25.0/255 green:32.0/255 blue:40.0/255 alpha:1]; [box.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)]; if (*ref) { UILabel *c=[self label:@"✓" frame:box.bounds size:16 color:UIColor.whiteColor]; c.textAlignment=NSTextAlignmentCenter; [box addSubview:c]; } }
+- (void)addSlider:(UIView *)parent y:(CGFloat *)y title:(NSString *)title ref:(float *)ref min:(float)min max:(float)max {
+    UILabel *l=[self label:[NSString stringWithFormat:@"%@ %.1f",title,*ref] frame:CGRectMake(14,*y,parent.bounds.size.width-28,20) size:12 color:[UIColor colorWithWhite:.72 alpha:1]]; [parent addSubview:l]; *y+=20;
+    UISlider *sl=[[UISlider alloc] initWithFrame:CGRectMake(14,*y,parent.bounds.size.width-28,24)]; sl.minimumValue=min; sl.maximumValue=max; sl.value=*ref; sl.minimumTrackTintColor=_accent; sl.maximumTrackTintColor=[UIColor colorWithRed:25.0/255 green:32.0/255 blue:40.0/255 alpha:1]; sl.tag=(NSInteger)ref; [sl addTarget:self action:@selector(slider:) forControlEvents:UIControlEventValueChanged]; [parent addSubview:sl]; *y+=38;
+}
+- (void)slider:(UISlider *)s { float *p=(float *)s.tag; if (p) *p=s.value; }
+- (void)addLine:(UIView *)v y:(CGFloat)y { UIView *l=[[UIView alloc] initWithFrame:CGRectMake(14,y,v.bounds.size.width-28,1)]; l.backgroundColor=[UIColor colorWithRed:26.0/255 green:29.0/255 blue:36.0/255 alpha:1]; [v addSubview:l]; }
+- (void)buildAim:(UIView *)v { CGFloat y=4; [self addCheck:v y:&y title:@"Aimbot" ref:&Vars.Aimbot]; [self addCheck:v y:&y title:@"Show FOV" ref:&Vars.isAimFov]; [self addCheck:v y:&y title:@"Ignore Knocked" ref:&Vars.IgnoreKnocked]; [self addCheck:v y:&y title:@"Only Visible" ref:&Vars.VisibleCheck]; [self addLine:v y:y+2]; y+=12; [self addSlider:v y:&y title:@"FOV" ref:&Vars.AimFov min:0 max:360]; }
+- (void)buildVisual:(UIView *)v { CGFloat y=4; [self addCheck:v y:&y title:@"ESP Enable" ref:&Vars.Enable]; [self addLine:v y:y+2]; y+=12; [self addCheck:v y:&y title:@"ESP Lines" ref:&Vars.lines]; [self addCheck:v y:&y title:@"ESP Distance" ref:&Vars.Distance]; [self addCheck:v y:&y title:@"ESP Boxes" ref:&Vars.Box]; [self addCheck:v y:&y title:@"ESP Enemies" ref:&Vars.counts]; [self addCheck:v y:&y title:@"ESP Name" ref:&Vars.Name]; [self addCheck:v y:&y title:@"ESP Health" ref:&Vars.Health]; [self addCheck:v y:&y title:@"ESP Skeleton" ref:&Vars.skeleton]; }
+- (void)buildMisc:(UIView *)v { CGFloat y=4; [self addCheck:v y:&y title:@"AimKill" ref:&SpeeeX2Enabled]; [self addCheck:v y:&y title:@"No Recoil" ref:&NoRecoilEnabled]; [self addCheck:v y:&y title:@"Fly Player" ref:&Vars.UpPlayerOne]; [self addCheck:v y:&y title:@"Ghost Hack" ref:&Vars.ShowGhostButton]; }
+- (void)buildSettings:(UIView *)v { CGFloat y=4; [self addCheck:v y:&y title:@"Fast Reload" ref:&FastReloadEnabled]; [self addCheck:v y:&y title:@"Bypass" ref:&BypassEnabled]; [self addCheck:v y:&y title:@"Fake Lag" ref:&fakeLagEnabled]; [self addLine:v y:y+8]; y+=20; [v addSubview:[self label:@"Panel style: Monite" frame:CGRectMake(14,y,v.bounds.size.width-28,24) size:12 color:[UIColor colorWithWhite:.6 alpha:1]]]; }
+@end
+
 @implementation ImGuiDrawView
 ImFont *_espFont;
 ImFont* verdanab;
