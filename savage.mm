@@ -375,63 +375,15 @@ int FUNC_GHOST(void *instance) {
     ImGuiIO& io = ImGui::GetIO(); (void)io;
    ImGuiStyle& style = ImGui::GetStyle();
 
-style.Colors[ImGuiCol_Text]         = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
-style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);
-ImVec4 red      = ImVec4(1.00f, 0.00f, 0.00f, 1.00f); // #ff0000
-ImVec4 redHover = ImVec4(1.00f, 0.20f, 0.20f, 1.00f); // mais claro no hover
-ImVec4 redActive = ImVec4(1.00f, 0.10f, 0.10f, 0.80f); // um pouco mais escuro e com alpha
-style.Colors[ImGuiCol_WindowBg] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // preto absoluto
-style.Colors[ImGuiCol_ChildBg]  = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // preto absoluto
-style.Colors[ImGuiCol_PopupBg]  = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // preto absoluto
-style.Colors[ImGuiCol_Button]                 = ImVec4(red.x, red.y, red.z, 0.80f);
-style.Colors[ImGuiCol_ButtonHovered]          = red;
-style.Colors[ImGuiCol_ButtonActive]           = red;
-style.Colors[ImGuiCol_FrameBg]        = ImVec4(0.12f, 0.12f, 0.12f, 0.54f); // cinza escuro
-style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.20f, 0.20f, 0.20f, 0.60f); // um pouco mais claro
-style.Colors[ImGuiCol_FrameBgActive]  = ImVec4(0.25f, 0.25f, 0.25f, 0.67f); // ligeiramente mais claro que hover
-style.Colors[ImGuiCol_TitleBg]                = red;
-style.Colors[ImGuiCol_TitleBgActive]          = red;
-style.Colors[ImGuiCol_TitleBgCollapsed]       = red;
-style.Colors[ImGuiCol_Header]                 = red;
-style.Colors[ImGuiCol_HeaderHovered]          = red;
-style.Colors[ImGuiCol_HeaderActive]           = red;
-style.Colors[ImGuiCol_Tab]                    = red;
-style.Colors[ImGuiCol_TabHovered]             = red;
-style.Colors[ImGuiCol_TabActive]              = red;
-style.Colors[ImGuiCol_ScrollbarBg]            = red;
-style.Colors[ImGuiCol_ScrollbarGrab]          = red;
-style.Colors[ImGuiCol_ScrollbarGrabHovered]   = red;
-style.Colors[ImGuiCol_ScrollbarGrabActive]    = red;
-style.Colors[ImGuiCol_CheckMark] = red;
-style.Colors[ImGuiCol_SliderGrab] = red;
-style.Colors[ImGuiCol_SliderGrabActive] = redActive;
-style.FrameRounding = 10.0f;
-style.FrameRounding = 10.0f;
-style.WindowRounding = 5.0f;
-style.ChildRounding = 5.0f;
-style.FrameRounding = 5.0f;
-style.GrabRounding = 5.0f;
-style.PopupRounding = 5.0f;
-style.ScrollbarRounding = 5.0f;
-style.TabRounding = 5.0f;
-style.WindowBorderSize = 1.0f;
-style.FrameBorderSize = 1.0f;
-style.PopupBorderSize = 1.0f;
-style.WindowPadding = ImVec2(10.0f, 8.0f);
-style.FramePadding = ImVec2(12.0f, 4.0f);
-style.ItemSpacing = ImVec2(6.0f, 2.0f);
-
-
-
-
-
-
-
-
-
-
-
-
+style.Colors[ImGuiCol_Text] = ImVec4(1,1,1,1);
+style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.60f,0.60f,0.60f,1);
+ImVec4 moniteBg=ImVec4(11.0f/255,14.0f/255,21.0f/255,1), moniteFrame=ImVec4(25.0f/255,32.0f/255,40.0f/255,1), moniteAccent=ImVec4(0.8f,0.5f,1,1);
+style.Colors[ImGuiCol_WindowBg]=moniteBg; style.Colors[ImGuiCol_ChildBg]=moniteBg; style.Colors[ImGuiCol_PopupBg]=moniteFrame;
+style.Colors[ImGuiCol_Border]=ImVec4(26.0f/255,29.0f/255,36.0f/255,1); style.Colors[ImGuiCol_Button]=ImVec4(0,0,0,0); style.Colors[ImGuiCol_ButtonHovered]=moniteFrame; style.Colors[ImGuiCol_ButtonActive]=moniteFrame;
+style.Colors[ImGuiCol_FrameBg]=moniteFrame; style.Colors[ImGuiCol_FrameBgHovered]=ImVec4(35.0f/255,42.0f/255,52.0f/255,1); style.Colors[ImGuiCol_FrameBgActive]=moniteFrame;
+style.Colors[ImGuiCol_TitleBg]=moniteBg; style.Colors[ImGuiCol_TitleBgActive]=moniteBg; style.Colors[ImGuiCol_TitleBgCollapsed]=moniteBg; style.Colors[ImGuiCol_Header]=moniteFrame; style.Colors[ImGuiCol_HeaderHovered]=moniteFrame; style.Colors[ImGuiCol_HeaderActive]=moniteAccent;
+style.Colors[ImGuiCol_ScrollbarBg]=moniteBg; style.Colors[ImGuiCol_ScrollbarGrab]=moniteFrame; style.Colors[ImGuiCol_ScrollbarGrabHovered]=moniteAccent; style.Colors[ImGuiCol_ScrollbarGrabActive]=moniteAccent; style.Colors[ImGuiCol_CheckMark]=moniteAccent; style.Colors[ImGuiCol_SliderGrab]=moniteAccent; style.Colors[ImGuiCol_SliderGrabActive]=moniteAccent; style.Colors[ImGuiCol_Separator]=ImVec4(26.0f/255,29.0f/255,36.0f/255,1);
+style.WindowRounding=0; style.ChildRounding=0; style.FrameRounding=4; style.GrabRounding=4; style.PopupRounding=4; style.ScrollbarRounding=3; style.WindowBorderSize=1; style.FrameBorderSize=0; style.PopupBorderSize=1; style.WindowPadding=ImVec2(0,8); style.FramePadding=ImVec2(10,5); style.ItemSpacing=ImVec2(8,5); style.ItemInnerSpacing=ImVec2(8,4);
     static const ImWchar icons_ranges[] = { 0xf000, 0xf3ff, 0 };
     ImFontConfig icons_config;
     ImFontConfig CustomFont;
@@ -633,23 +585,26 @@ self.view.multipleTouchEnabled = YES;
         ImFont* font = ImGui::GetFont();
         font->Scale = 16.f / font->FontSize;
         
-        CGFloat x = (io.DisplaySize.x - 400.0f) * 0.5f;
-        CGFloat y = (io.DisplaySize.y - 240.0f) * 0.5f;
+        CGFloat x = (io.DisplaySize.x - 425.0f) * 0.5f;
+        CGFloat y = (io.DisplaySize.y - 340.0f) * 0.5f;
         // Mantém a camada UIKit alinhada à janela real do ImGui.
         menuPos = ImVec2(x, y);
-        menuSize = ImVec2(400, 240);
+        menuSize = ImVec2(425, 340);
 
-        ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowSize(ImVec2(340, 250), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(425, 340), ImGuiCond_Always);
 
         
         if (MenDeal == true)
         {
-            ImGui::SetNextWindowSize(ImVec2(400, 240), ImGuiCond_Always); // Aumentar o tamanho da janela para acomodar as colunas
-            ImGui::Begin(ENCRYPT("                        FFH4XX     @PH SENSI / @PH XITER"), &MenDeal, ImGuiWindowFlags_NoResize);
-            
+            ImGui::SetNextWindowSize(ImVec2(425, 340), ImGuiCond_Always);
+            ImGui::Begin("##MONITE_PANEL", &MenDeal, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+            ImDrawList* moniteDraw = ImGui::GetWindowDrawList();
+            ImVec2 moniteOrigin = ImGui::GetWindowPos();
+            moniteDraw->AddRectFilled(moniteOrigin, ImVec2(moniteOrigin.x+425, moniteOrigin.y+340), IM_COL32(11,14,21,255), 0);
+            moniteDraw->AddLine(ImVec2(moniteOrigin.x+113, moniteOrigin.y), ImVec2(moniteOrigin.x+113, moniteOrigin.y+340), IM_COL32(26,29,36,255), 1);
             ImGui::Columns(2, "MainColumns", false); // Duas colunas
-            ImGui::SetColumnWidth(0, 60.0f); // Largura da coluna da esquerda
+            ImGui::SetColumnWidth(0, 113.0f);
             ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5); // Espaço adicional
 
             static int selected_tab = 0; // 0 for AIM, 1 for ESP, 2 for MISC
@@ -658,25 +613,25 @@ self.view.multipleTouchEnabled = YES;
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 8));
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 6));
             
-float buttonWidth = 47.0f;
-if (ImGui::Button(ICON_FA_CROSSHAIRS, ImVec2(buttonWidth, 43))) {
-    selected_tab = 0;
-}
-if (ImGui::Button(ICON_FA_EYE, ImVec2(buttonWidth, 43))) {
-    selected_tab = 1;
-}
-if (ImGui::Button(ICON_FA_COG, ImVec2(buttonWidth, 43))) {
-    selected_tab = 2;
-}
-if (ImGui::Button(ICON_FA_ADDRESS_CARD, ImVec2(buttonWidth, 43))) {
-    selected_tab = 3;
-}
-
+float buttonWidth = 101.0f;
+const ImVec4 activeTabBg = ImVec4(25.0f/255,32.0f/255,40.0f/255,1);
+if (selected_tab == 0) ImGui::PushStyleColor(ImGuiCol_Button, activeTabBg);
+if (ImGui::Button(ICON_FA_CROSSHAIRS "\nAimbot", ImVec2(buttonWidth,52))) selected_tab=0;
+if (selected_tab == 0) ImGui::PopStyleColor();
+if (selected_tab == 1) ImGui::PushStyleColor(ImGuiCol_Button, activeTabBg);
+if (ImGui::Button(ICON_FA_EYE "\nVisuals", ImVec2(buttonWidth,52))) selected_tab=1;
+if (selected_tab == 1) ImGui::PopStyleColor();
+if (selected_tab == 2) ImGui::PushStyleColor(ImGuiCol_Button, activeTabBg);
+if (ImGui::Button(ICON_FA_COG "\nConfig", ImVec2(buttonWidth,52))) selected_tab=2;
+if (selected_tab == 2) ImGui::PopStyleColor();
+if (selected_tab == 3) ImGui::PushStyleColor(ImGuiCol_Button, activeTabBg);
+if (ImGui::Button(ICON_FA_ADDRESS_CARD "\nSettings", ImVec2(buttonWidth,52))) selected_tab=3;
+if (selected_tab == 3) ImGui::PopStyleColor();
             ImGui::PopStyleVar(2);
 
             ImGui::NextColumn(); // Mover para a segunda coluna
 
-            SeparatorCustom(330.0f, 1.0f, userColor);
+            SeparatorCustom(285.0f, 1.0f, userColor);
             ImGui::Spacing();
 
 
