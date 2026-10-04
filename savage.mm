@@ -618,16 +618,24 @@ self.view.multipleTouchEnabled = YES;
             screenW = view.bounds.size.width;
             screenH = view.bounds.size.height;
         }
-        // Painel grande e proporcional ao vídeo, sempre totalmente dentro da tela.
+        // Layout responsivo: em retrato o painel fica alto o bastante para o conteúdo;
+        // em landscape mantém o formato largo da referência.
         const CGFloat safeMargin = 8.0f;
-        const CGFloat referenceRatio = 1.86f;
         CGFloat maxW = MAX(80.0f, screenW - safeMargin * 2.0f);
         CGFloat maxH = MAX(80.0f, screenH - safeMargin * 2.0f);
-        CGFloat panelW = MIN(maxW * 0.90f, maxH * 0.90f * referenceRatio);
-        CGFloat panelH = panelW / referenceRatio;
-        if (panelH > maxH * 0.90f) {
-            panelH = maxH * 0.90f;
-            panelW = panelH * referenceRatio;
+        CGFloat panelW;
+        CGFloat panelH;
+        if (screenH > screenW) {
+            panelW = maxW * 0.92f;
+            panelH = maxH * 0.66f;
+        } else {
+            const CGFloat referenceRatio = 1.86f;
+            panelW = MIN(maxW * 0.90f, maxH * 0.90f * referenceRatio);
+            panelH = panelW / referenceRatio;
+            if (panelH > maxH * 0.90f) {
+                panelH = maxH * 0.90f;
+                panelW = panelH * referenceRatio;
+            }
         }
         CGFloat x = (screenW - panelW) * 0.5f;
         CGFloat y = (screenH - panelH) * 0.5f;
