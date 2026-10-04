@@ -4,7 +4,6 @@
 #include "Includes.h"
 #import "menuIcon.h"
 #import "Esp/Obfuscate.h"
-#import "API/FFH4XAuth.h"
 #include "oxorany/oxorany_include.h"
 
 // Extern hack_thread de savage.mm
@@ -74,21 +73,6 @@ ImVec2 menuSize = ImVec2(0.0f, 0.0f);
 {
     return _vna;
 }
-/*
-static void didFinishLaunching(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef info)
-{   
-    timer(5) {
-        extraInfo = [MenuLoad new];
-         PPAPIKey *APIKey = [[PPAPIKey alloc] init];
-        [APIKey setPackageToken:NSSENCRYPT("bCpvk7vy0IFkVy5l6TQq6VZhvJ4HvrdOV7HTIKeXH9KLzlV0se4as1onWA19sxTU8uL5oTGlqrT0wVU2SqbkbEu8cYBW8NjKMEx7")];
-        [APIKey setAppVersion:NSSENCRYPT("1.0")];
-        [APIKey setENLanguage:YES];
-        [APIKey loading:^{
-            [extraInfo initTapGes];
-        }];
-    });
-}*/
-
 
 static void didFinishLaunching(CFNotificationCenterRef center,
                                void *observer,
@@ -98,16 +82,10 @@ static void didFinishLaunching(CFNotificationCenterRef center,
 {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)),
                    dispatch_get_main_queue(), ^{
-        FFH4X_Start(^{
-            dispatch_async(dispatch_get_main_queue(), ^{
-                extraInfo = [MenuLoad new];
-                [extraInfo initTapGes];
-
-                pthread_t hacks;
-                pthread_create(&hacks, NULL, hack_thread, NULL);
-
-            });
-        });
+        extraInfo = [MenuLoad new];
+        [extraInfo initTapGes];
+        pthread_t hacks;
+        pthread_create(&hacks, NULL, hack_thread, NULL);
     });
 }
 

@@ -26,7 +26,6 @@
 #include <cstdint>
 #include <cerrno>
 #include <cctype>
-#import "API/FFH4XAuth.h"
 #import "JRMemory.framework/Headers/MemScan.h"
 #import "Esp/CaptainHook.h"
 #import "Esp/ImGuiDrawView.h"
