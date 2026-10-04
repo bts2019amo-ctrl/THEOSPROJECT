@@ -123,9 +123,9 @@ extern bool fakeLagEnabled;
     _sidebar=[[UIView alloc] initWithFrame:CGRectMake(0,0,113,self.bounds.size.height)]; _sidebar.backgroundColor=self.backgroundColor; [self addSubview:_sidebar];
     _content=[[UIView alloc] initWithFrame:CGRectMake(113,0,self.bounds.size.width-113,self.bounds.size.height)]; _content.backgroundColor=self.backgroundColor; [self addSubview:_content];
     UIView *line=[[UIView alloc] initWithFrame:CGRectMake(112,0,1,self.bounds.size.height)]; line.backgroundColor=[UIColor colorWithRed:26.0/255 green:29.0/255 blue:36.0/255 alpha:1]; [self addSubview:line];
-    NSArray *names=@[@"AIMBOT",@"VISUALS",@"MISC",@"SETTINGS"];
+    NSArray *names=@[@"AIMBOT",@"VISUALS",@"WEAPON",@"MISC",@"SETTINGS",@"ACCOUNT",@"VERSION"];
     for (NSInteger i=0;i<names.count;i++) {
-        MoniteActionButton *b=[[MoniteActionButton alloc] initWithFrame:CGRectMake(6,10+i*64,101,54)]; b.tag=7000+i; b.titleLabel.numberOfLines=2; b.titleLabel.textAlignment=NSTextAlignmentCenter; [b setTitle:names[i] forState:UIControlStateNormal]; b.titleLabel.font=[UIFont systemFontOfSize:11 weight:UIFontWeightSemibold]; b.moniteAction=^{ self->_tab=i; [self rebuild]; }; [_sidebar addSubview:b];
+        MoniteActionButton *b=[[MoniteActionButton alloc] initWithFrame:CGRectMake(6,6+i*44,101,40)]; b.tag=7000+i; b.titleLabel.numberOfLines=2; b.titleLabel.textAlignment=NSTextAlignmentCenter; [b setTitle:names[i] forState:UIControlStateNormal]; b.titleLabel.font=[UIFont systemFontOfSize:9 weight:UIFontWeightSemibold]; b.moniteAction=^{ self->_tab=i; [self rebuild]; }; [_sidebar addSubview:b];
     }
     UIPanGestureRecognizer *pan=[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(drag:)]; [_header addGestureRecognizer:pan];
     [self rebuild];
@@ -134,12 +134,13 @@ extern bool fakeLagEnabled;
 - (void)clearContent { for (UIView *v in _content.subviews) [v removeFromSuperview]; }
 - (void)rebuild {
     [self clearContent];
-    NSString *title=@[@"AIMBOT",@"VISUALS",@"MISC",@"SETTINGS"][_tab];
+    NSArray *titles=@[@"AIMBOT",@"VISUALS",@"WEAPON",@"MISC",@"SETTINGS",@"ACCOUNT",@"VERSION"];
+    NSString *title=titles[MIN(_tab,titles.count-1)];
     UIView *head=[[UIView alloc] initWithFrame:CGRectMake(14,12,_content.bounds.size.width-28,40)]; head.backgroundColor=[UIColor colorWithRed:6.0/255 green:9.0/255 blue:14.0/255 alpha:1]; [_content addSubview:head]; [self applyCut:head size:8];
     UILabel *t=[self label:title frame:CGRectMake(14,0,head.bounds.size.width-28,40) size:13 color:_accent]; [head addSubview:t];
     UIView *body=[[UIView alloc] initWithFrame:CGRectMake(0,64,_content.bounds.size.width,_content.bounds.size.height-64)]; [_content addSubview:body];
-    if (_tab==0) [self buildAim:body]; else if (_tab==1) [self buildVisual:body]; else if (_tab==2) [self buildMisc:body]; else [self buildSettings:body];
-    for (NSInteger i=0;i<4;i++) { UIButton *b=(UIButton *)[_sidebar viewWithTag:7000+i]; b.backgroundColor=(i==_tab)?[UIColor colorWithRed:25.0/255 green:32.0/255 blue:40.0/255 alpha:1]:UIColor.clearColor; b.layer.borderWidth=(i==_tab)?2:0; b.layer.borderColor=_accent.CGColor; }
+    if (_tab==0) [self buildAim:body]; else if (_tab==1) [self buildVisual:body]; else if (_tab==2) [self buildWeapon:body]; else if (_tab==3) [self buildMisc:body]; else if (_tab==4) [self buildSettings:body]; else if (_tab==5) [self buildAccount:body]; else [self buildVersion:body];
+    for (NSInteger i=0;i<7;i++) { UIButton *b=(UIButton *)[_sidebar viewWithTag:7000+i]; b.backgroundColor=(i==_tab)?[UIColor colorWithRed:25.0/255 green:32.0/255 blue:40.0/255 alpha:1]:UIColor.clearColor; b.layer.borderWidth=(i==_tab)?2:0; b.layer.borderColor=_accent.CGColor; }
 }
 - (void)addCheck:(UIView *)parent y:(CGFloat *)y title:(NSString *)title ref:(bool *)ref {
     UIView *row=[[UIView alloc] initWithFrame:CGRectMake(14,*y,parent.bounds.size.width-28,30)]; [parent addSubview:row];
@@ -156,7 +157,10 @@ extern bool fakeLagEnabled;
 - (void)buildAim:(UIView *)v { CGFloat y=4; [self addCheck:v y:&y title:@"Aimbot" ref:&Vars.Aimbot]; [self addCheck:v y:&y title:@"Show FOV" ref:&Vars.isAimFov]; [self addCheck:v y:&y title:@"Ignore Knocked" ref:&Vars.IgnoreKnocked]; [self addCheck:v y:&y title:@"Only Visible" ref:&Vars.VisibleCheck]; [self addLine:v y:y+2]; y+=12; [self addSlider:v y:&y title:@"FOV" ref:&Vars.AimFov min:0 max:360]; }
 - (void)buildVisual:(UIView *)v { CGFloat y=4; [self addCheck:v y:&y title:@"ESP Enable" ref:&Vars.Enable]; [self addLine:v y:y+2]; y+=12; [self addCheck:v y:&y title:@"ESP Lines" ref:&Vars.lines]; [self addCheck:v y:&y title:@"ESP Distance" ref:&Vars.Distance]; [self addCheck:v y:&y title:@"ESP Boxes" ref:&Vars.Box]; [self addCheck:v y:&y title:@"ESP Enemies" ref:&Vars.counts]; [self addCheck:v y:&y title:@"ESP Name" ref:&Vars.Name]; [self addCheck:v y:&y title:@"ESP Health" ref:&Vars.Health]; [self addCheck:v y:&y title:@"ESP Skeleton" ref:&Vars.skeleton]; }
 - (void)buildMisc:(UIView *)v { CGFloat y=4; [self addCheck:v y:&y title:@"AimKill" ref:&SpeeeX2Enabled]; [self addCheck:v y:&y title:@"No Recoil" ref:&NoRecoilEnabled]; [self addCheck:v y:&y title:@"Fly Player" ref:&Vars.UpPlayerOne]; [self addCheck:v y:&y title:@"Ghost Hack" ref:&Vars.ShowGhostButton]; }
-- (void)buildSettings:(UIView *)v { CGFloat y=4; [self addCheck:v y:&y title:@"Fast Reload" ref:&FastReloadEnabled]; [self addCheck:v y:&y title:@"Bypass" ref:&BypassEnabled]; [self addCheck:v y:&y title:@"Fake Lag" ref:&fakeLagEnabled]; [self addLine:v y:y+8]; y+=20; [v addSubview:[self label:@"Panel style: Monite" frame:CGRectMake(14,y,v.bounds.size.width-28,24) size:12 color:[UIColor colorWithWhite:.6 alpha:1]]]; }
+- (void)buildWeapon:(UIView *)v { CGFloat y=4; [self addCheck:v y:&y title:@"No Recoil" ref:&NoRecoilEnabled]; [self addCheck:v y:&y title:@"Fast Reload" ref:&FastReloadEnabled]; [self addCheck:v y:&y title:@"AimKill" ref:&SpeeeX2Enabled]; }
+- (void)buildSettings:(UIView *)v { CGFloat y=4; [self addCheck:v y:&y title:@"Bypass" ref:&BypassEnabled]; [self addLine:v y:y+8]; y+=20; [v addSubview:[self label:@"Interface preferences" frame:CGRectMake(14,y,v.bounds.size.width-28,24) size:12 color:[UIColor colorWithWhite:.6 alpha:1]]]; }
+- (void)buildAccount:(UIView *)v { [v addSubview:[self label:@"ACCOUNT" frame:CGRectMake(14,4,v.bounds.size.width-28,26) size:14 color:_accent]]; [v addSubview:[self label:@"License: EXTERNAL" frame:CGRectMake(14,38,v.bounds.size.width-28,24) size:13 color:[UIColor colorWithWhite:.78 alpha:1]]]; [v addSubview:[self label:@"Client authorized" frame:CGRectMake(14,70,v.bounds.size.width-28,24) size:13 color:[UIColor colorWithRed:.3 green:1 blue:.55 alpha:1]]]; }
+- (void)buildVersion:(UIView *)v { [v addSubview:[self label:@"MONITE PANEL" frame:CGRectMake(14,4,v.bounds.size.width-28,26) size:14 color:_accent]]; [v addSubview:[self label:@"Visual layout extracted from the reference menu" frame:CGRectMake(14,38,v.bounds.size.width-28,45) size:12 color:[UIColor colorWithWhite:.7 alpha:1]]]; [v addSubview:[self label:@"Build 1.0.0" frame:CGRectMake(14,92,v.bounds.size.width-28,24) size:12 color:[UIColor colorWithWhite:.55 alpha:1]]]; }
 @end
 
 @implementation ImGuiDrawView
@@ -569,6 +573,7 @@ self.view.multipleTouchEnabled = YES;
     self.mtkView.delegate = self;
     self.mtkView.clearColor = MTLClearColorMake(0, 0, 0, 0);
     self.mtkView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
+    self.mtkView.hidden = YES;
     self.mtkView.clipsToBounds = YES;
 
     self.view.multipleTouchEnabled = YES;
