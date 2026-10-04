@@ -610,22 +610,26 @@ self.view.multipleTouchEnabled = YES;
         ImFont* font = ImGui::GetFont();
         font->Scale = 16.f / font->FontSize;
         
-        // Use o tamanho real do MTKView; o rootView pode continuar em retrato.
-        CGFloat screenW = view.bounds.size.width;
-        CGFloat screenH = view.bounds.size.height;
+        // Calcula tudo no mesmo espaço usado pelo ImGui, com margem segura.
+        // Assim a janela nunca sai da MTKView nem aparece cortada pela metade.
+        CGFloat screenW = io.DisplaySize.x;
+        CGFloat screenH = io.DisplaySize.y;
         if (screenW <= 1.0f || screenH <= 1.0f) {
-            screenW = io.DisplaySize.x;
-            screenH = io.DisplaySize.y;
+            screenW = view.bounds.size.width;
+            screenH = view.bounds.size.height;
         }
-        // Proporção widescreen da referência (aprox. 1,86:1), sem deformar.
-        CGFloat panelW = MIN(screenW * 0.88f, screenH * 1.72f);
-        CGFloat panelH = panelW / 1.86f;
-        if (panelH > screenH * 0.86f) {
-            panelH = screenH * 0.86f;
-            panelW = panelH * 1.86f;
+        const CGFloat safeMargin = 12.0f;
+        const CGFloat referenceRatio = 1.86f;
+        CGFloat maxW = MAX(80.0f, screenW - safeMargin * 2.0f);
+        CGFloat maxH = MAX(80.0f, screenH - safeMargin * 2.0f);
+        CGFloat panelW = MIN(maxW, maxH * referenceRatio);
+        CGFloat panelH = panelW / referenceRatio;
+        if (panelH > maxH) {
+            panelH = maxH;
+            panelW = panelH * referenceRatio;
         }
-        CGFloat x = (screenW - panelW) * 0.5f;
-        CGFloat y = (screenH - panelH) * 0.5f;
+        CGFloat x = MAX(safeMargin, (screenW - panelW) * 0.5f);
+        CGFloat y = MAX(safeMargin, (screenH - panelH) * 0.5f);
         static float panelAnim = 0.0f;
         if (MenDeal) panelAnim = ImMin(1.0f, panelAnim + io.DeltaTime * 8.0f);
         else panelAnim = 0.0f;
@@ -643,6 +647,10 @@ self.view.multipleTouchEnabled = YES;
             ImGui::SetNextWindowSize(ImVec2(panelW, panelH), ImGuiCond_Always);
             ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.55f + 0.45f * panelAnim);
             ImGui::Begin("##SAPP_HIRE_PANEL", &MenDeal, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+            // Usa o tamanho efetivo aceito pelo ImGui para nunca desenhar fora da janela.
+            ImVec2 actualPanelSize = ImGui::GetWindowSize();
+            panelW = actualPanelSize.x;
+            panelH = actualPanelSize.y;
             ImDrawList* panelDraw = ImGui::GetWindowDrawList();
             ImVec2 panelOrigin = ImGui::GetWindowPos();
             ImVec2 panelEnd = ImVec2(panelOrigin.x + panelW, panelOrigin.y + panelH);
