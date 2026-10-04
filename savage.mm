@@ -612,8 +612,13 @@ self.view.multipleTouchEnabled = YES;
         
         CGFloat screenW = [UIApplication sharedApplication].windows[0].rootViewController.view.frame.size.width;
         CGFloat screenH = [UIApplication sharedApplication].windows[0].rootViewController.view.frame.size.height;
-        CGFloat panelW = MIN(720.0f, screenW * 0.78f);
-        CGFloat panelH = MIN(430.0f, screenH * 0.78f);
+        // Proporção widescreen da referência (aprox. 1,86:1).
+        CGFloat panelW = MIN(1210.0f, screenW * 0.82f);
+        CGFloat panelH = panelW / 1.86f;
+        if (panelH > screenH * 0.84f) {
+            panelH = screenH * 0.84f;
+            panelW = panelH * 1.86f;
+        }
         CGFloat x = (screenW - panelW) * 0.5f;
         CGFloat y = (screenH - panelH) * 0.5f;
         // Mantém a camada UIKit alinhada à janela real do ImGui.
@@ -627,37 +632,54 @@ self.view.multipleTouchEnabled = YES;
         if (MenDeal == true)
         {
             ImGui::SetNextWindowSize(ImVec2(panelW, panelH), ImGuiCond_Always);
-            ImGui::Begin(ENCRYPT("SAPP HIRE   //   FFH4X"), &MenDeal, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
-            
-            ImGui::Columns(2, "MainColumns", false); // Duas colunas
-            ImGui::SetColumnWidth(0, 112.0f); // Navegação lateral no estilo da referência
-            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5); // Espaço adicional
+            ImGui::Begin("##SAPP_HIRE_PANEL", &MenDeal, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+            ImDrawList* panelDraw = ImGui::GetWindowDrawList();
+            ImVec2 panelOrigin = ImGui::GetWindowPos();
+            ImVec2 panelEnd = ImVec2(panelOrigin.x + panelW, panelOrigin.y + panelH);
+            panelDraw->AddRectFilled(panelOrigin, panelEnd, IM_COL32(10, 11, 16, 248), 12.0f);
+            panelDraw->AddRectFilled(panelOrigin, ImVec2(panelEnd.x, panelOrigin.y + 88.0f), IM_COL32(13, 14, 20, 250), 12.0f);
+            panelDraw->AddLine(ImVec2(panelOrigin.x, panelOrigin.y + 88.0f), ImVec2(panelEnd.x, panelOrigin.y + 88.0f), IM_COL32(29, 30, 39, 255), 1.0f);
+            ImGui::SetCursorPos(ImVec2(26.0f, 24.0f));
+            ImGui::TextColored(ImVec4(0.95f, 0.95f, 0.98f, 1.0f), ICON_FA_BOLT);
+            ImGui::SameLine(58.0f);
+            ImGui::TextColored(ImVec4(0.92f, 0.92f, 0.95f, 1.0f), "SAPP");
+            ImGui::SameLine(111.0f);
+            ImGui::TextColored(ImVec4(0.95f, 0.02f, 0.18f, 1.0f), "HIRE");
+            ImGui::SetCursorPos(ImVec2(panelW - 82.0f, 30.0f));
+            ImGui::TextColored(ImVec4(0.22f, 0.23f, 0.28f, 1.0f), "OXIDE");
+            ImGui::SetCursorPos(ImVec2(0.0f, 89.0f));
+            ImGui::Columns(2, "MainColumns", false);
+            ImGui::SetColumnWidth(0, panelW * 0.22f);
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 8);
 
             static int selected_tab = 0; // 0 for AIM, 1 for ESP, 2 for MISC
 
-            // Coluna da esquerda (navegação)
+            // Navegação lateral no estilo do vídeo.
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 8));
-            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 6));
-            
-float buttonWidth = 100.0f;
-if (ImGui::Button(ICON_FA_CROSSHAIRS "  Aimbot", ImVec2(buttonWidth, 36))) {
-    selected_tab = 0;
-}
-if (ImGui::Button(ICON_FA_EYE "  Visuals", ImVec2(buttonWidth, 36))) {
-    selected_tab = 1;
-}
-if (ImGui::Button(ICON_FA_COG "  Config", ImVec2(buttonWidth, 36))) {
-    selected_tab = 2;
-}
-if (ImGui::Button(ICON_FA_ADDRESS_CARD "  About", ImVec2(buttonWidth, 36))) {
-    selected_tab = 3;
-}
-
+            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 7));
+            float buttonWidth = panelW * 0.19f;
+            ImGui::TextDisabled("COMBAT");
+            if (selected_tab == 0) ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.25f, 0.015f, 0.06f, 1.0f));
+            if (ImGui::Button(ICON_FA_CROSSHAIRS "   Aimbot", ImVec2(buttonWidth, 40))) selected_tab = 0;
+            if (selected_tab == 0) ImGui::PopStyleColor();
+            ImGui::Dummy(ImVec2(1, 5));
+            ImGui::TextDisabled("VISUAL");
+            if (selected_tab == 1) ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.25f, 0.015f, 0.06f, 1.0f));
+            if (ImGui::Button(ICON_FA_EYE "   Visuals", ImVec2(buttonWidth, 40))) selected_tab = 1;
+            if (selected_tab == 1) ImGui::PopStyleColor();
+            ImGui::Dummy(ImVec2(1, 5));
+            ImGui::TextDisabled("SYSTEM");
+            if (selected_tab == 2) ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.25f, 0.015f, 0.06f, 1.0f));
+            if (ImGui::Button(ICON_FA_FOLDER_OPEN "   Config", ImVec2(buttonWidth, 40))) selected_tab = 2;
+            if (selected_tab == 2) ImGui::PopStyleColor();
+            if (selected_tab == 3) ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.25f, 0.015f, 0.06f, 1.0f));
+            if (ImGui::Button(ICON_FA_COG "   Settings", ImVec2(buttonWidth, 40))) selected_tab = 3;
+            if (selected_tab == 3) ImGui::PopStyleColor();
             ImGui::PopStyleVar(2);
 
             ImGui::NextColumn(); // Mover para a segunda coluna
 
-            SeparatorCustom(panelW - 150.0f, 1.0f, userColor);
+            SeparatorCustom(panelW * 0.70f, 1.0f, userColor);
             ImGui::Spacing();
 
 
@@ -826,7 +848,7 @@ ImGui::Text(ENCRYPT("Expira em: %s"), [expiryDate UTF8String]);
 ImGui::Text(ENCRYPT("Tempo Restante: %s"), sRemainingTime.c_str());
 ImGui::Text(ENCRYPT("Key: %s"), [key UTF8String]);
 
-SeparatorCustom(330.0f, 1.0f, userColor);
+SeparatorCustom(panelW * 0.70f, 1.0f, userColor);
 ImGui::Text(ENCRYPT("Desenvolvedor: @PH SENSI"));
 if (ImGui::Button(ENCRYPT(" Discord "))) {
     NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:ENCRYPT("https://discord.gg/GFvbePNKSH")]];
