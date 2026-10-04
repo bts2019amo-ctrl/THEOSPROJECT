@@ -82,6 +82,12 @@ UIButton *menuView;
 @property (nonatomic, strong) UISwitch *ghostSwitch;
 @end
 
+extern bool SpeeeX2Enabled;
+extern bool NoRecoilEnabled;
+extern bool FastReloadEnabled;
+extern bool BypassEnabled;
+extern bool fakeLagEnabled;
+
 @interface MoniteActionButton : UIButton
 @property(nonatomic,copy) void (^moniteAction)(void);
 @end
@@ -118,7 +124,6 @@ UIButton *menuView;
     _content=[[UIView alloc] initWithFrame:CGRectMake(113,0,self.bounds.size.width-113,self.bounds.size.height)]; _content.backgroundColor=self.backgroundColor; [self addSubview:_content];
     UIView *line=[[UIView alloc] initWithFrame:CGRectMake(112,0,1,self.bounds.size.height)]; line.backgroundColor=[UIColor colorWithRed:26.0/255 green:29.0/255 blue:36.0/255 alpha:1]; [self addSubview:line];
     NSArray *names=@[@"AIMBOT",@"VISUALS",@"MISC",@"SETTINGS"];
-    NSArray *icons=@[UILabel.new,UILabel.new,UILabel.new,UILabel.new]; (void)icons;
     for (NSInteger i=0;i<names.count;i++) {
         MoniteActionButton *b=[[MoniteActionButton alloc] initWithFrame:CGRectMake(6,10+i*64,101,54)]; b.tag=7000+i; b.titleLabel.numberOfLines=2; b.titleLabel.textAlignment=NSTextAlignmentCenter; [b setTitle:names[i] forState:UIControlStateNormal]; b.titleLabel.font=[UIFont systemFontOfSize:11 weight:UIFontWeightSemibold]; b.moniteAction=^{ self->_tab=i; [self rebuild]; }; [_sidebar addSubview:b];
     }
