@@ -20,7 +20,6 @@ jobs:
           THEOS: ${{ runner.temp }}/theos
         run: |
           git clone --recursive --depth 1 https://github.com/theos/theos.git "$THEOS"
-          "$THEOS/bin/bootstrap"
           SDK_PATH="$(xcrun --sdk iphoneos --show-sdk-path)"
           SDK_VERSION="$(xcrun --sdk iphoneos --show-sdk-version)"
           ln -s "$SDK_PATH" "$THEOS/sdks/iPhoneOS${SDK_VERSION}.sdk"
